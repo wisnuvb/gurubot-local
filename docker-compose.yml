@@ -1,0 +1,94 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/nextjs/Dockerfile
+    container_name: gurubot-app
+    env_file:
+      - .env.docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      ocr:
+        condition: service_started
+      whisper:
+        condition: service_started
+    networks:
+      - gurubot
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:2050/api/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  ocr:
+    build:
+      context: .
+      dockerfile: docker/ocr/Dockerfile
+    container_name: gurubot-ocr
+    volumes:
+      - ocr-models:/models/huggingface
+    networks:
+      - gurubot
+    restart: unless-stopped
+
+  whisper:
+    build:
+      context: .
+      dockerfile: docker/whisper/Dockerfile
+    container_name: gurubot-whisper
+    env_file:
+      - .env.docker
+    environment:
+      HF_HOME: /models/huggingface
+    volumes:
+      - whisper-models:/models/huggingface
+    networks:
+      - gurubot
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: gurubot-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - gurubot
+    restart: unless-stopped
+
+  dns:
+    image: technitium/dns-server:latest
+    container_name: gurubot-dns
+    env_file:
+      - .env.docker
+    environment:
+      DNS_SERVER_DOMAIN: gurubot.sekolah
+      DNS_SERVER_FORWARDERS: 8.8.8.8,1.1.1.1
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+      # Host 15380: Windows/WSL sering memblokir bind ke 5380 (Hyper-V excluded ports)
+      - "127.0.0.1:15380:5380"
+    volumes:
+      - dns-config:/etc/dns
+    networks:
+      - gurubot
+    restart: unless-stopped
+
+networks:
+  gurubot:
+    driver: bridge
+
+volumes:
+  ocr-models:
+  whisper-models:
+  dns-config:

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GuruBot — Portal Operator (PC Server)</title>
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+  <div id="pin-screen" class="screen hidden">
+    <div class="card pin-card">
+      <h1>Portal Operator</h1>
+      <p>Hanya untuk TU / admin IT di <strong>PC server</strong>. Bukan untuk siswa/guru.</p>
+      <p class="muted">Aplikasi sekolah tetap di <strong>https://gurubot.sekolah/welcome</strong></p>
+      <input id="pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off" />
+      <button id="pin-submit" type="button">Masuk</button>
+      <p id="pin-error" class="error hidden"></p>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div>
+        <strong>GuruBot Operator</strong>
+        <span class="muted">Setup server · http://127.0.0.1:2077 (lokal)</span>
+      </div>
+      <nav>
+        <button type="button" data-view="dashboard" class="nav active">Dashboard</button>
+        <button type="button" data-view="setup" class="nav">Wizard setup</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="view-dashboard" class="view">
+        <div class="actions-row">
+          <button type="button" id="btn-refresh">Periksa ulang</button>
+          <button type="button" id="btn-setup-dns">Sinkronkan DNS</button>
+          <button type="button" id="btn-firewall">Firewall WiFi (443/53)</button>
+          <a id="link-technitium" href="http://127.0.0.1:15380" target="_blank" rel="noopener">Technitium DNS</a>
+          <a href="https://gurubot.sekolah/welcome" target="_blank" rel="noopener">Buka app sekolah</a>
+        </div>
+        <div id="summary" class="summary"></div>
+        <div id="lan-access" class="info-panel hidden"></div>
+        <div id="mysql-info" class="info-panel hidden"></div>
+        <div id="checks" class="checks-grid"></div>
+        <h3>Log autostart (40 baris terakhir)</h3>
+        <pre id="autostart-log" class="log"></pre>
+      </section>
+
+      <section id="view-setup" class="view hidden">
+        <ol class="wizard-steps" id="wizard-steps"></ol>
+        <article id="wizard-panel" class="wizard-panel"></article>
+        <div class="wizard-nav">
+          <button type="button" id="wiz-prev">Sebelumnya</button>
+          <button type="button" id="wiz-next">Lanjut</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+# =============================================================================
+# GuruBot deploy repo — yang di GitHub: skrip, docker, docs, whisper source.
+# Yang TIDAK di GitHub: artifact Next.js (salin dari gurubot-pwa), secret, certs.
+# Salin artifact: scripts/maintainer/build-and-copy-nextjs.sh
+# =============================================================================
+
+# --- Secrets & env runtime (contoh tetap di config/*.example) ---
+.env
+.env.*
+!.env.example
+!config/.env.docker.example
+artifacts/nextjs/.env
+artifacts/whisper/.env
+
+# --- Next.js standalone (seluruh folder — dari gurubot-pwa, bukan commit) ---
+artifacts/nextjs/
+
+# --- Whisper: source di git; cache/model/wheels tidak ---
+artifacts/whisper/wheels/*.whl
+artifacts/whisper/models/huggingface/
+
+# --- Python ---
+**/venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# --- Logs & backup ---
+logs/
+*.log
+artifacts/nextjs/logs/
+backup/
+
+# --- TLS lokal (mkcert, per mesin) ---
+certs/
+
+# --- Tools binary (unduh saat setup legacy / opsional) ---
+tools/nginx/nginx.exe
+tools/nginx/*.dll
+tools/nginx/logs/
+tools/nginx/temp/
+tools/nssm/nssm.exe
+tools/acrylic/
+tools/ffmpeg/ffmpeg.exe
+
+# --- OS & editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+__MACOSX/
+**/__MACOSX/**
+._*
+*.swp
+*.swo
+
+# --- Node (hanya jika npm di root / patch; artifact nextjs sudah di-ignore di atas) ---
+node_modules/
+
+# --- Docker local overrides (jika ada) ---
+docker-compose.override.yml
